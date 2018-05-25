@@ -5,6 +5,8 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,7 +19,9 @@ public class EjabberdXMLRPCClientBuilder implements IEjabberdXMLRPCClientBuilder
     String ejabberdHostname = "localhost";
     String ejabberdPort = "4560";
     String ejabberdProtocol = "http";
-    String ejabberdPath = "/RPC2";
+    String ejabberdPath = "/";
+    String ejabberdUser = null;
+    String ejabberdPassword = null;
 
     @Override
     public EjabberdXMLRPCClientBuilder setExecutorService(ExecutorService executorService){
@@ -34,6 +38,18 @@ public class EjabberdXMLRPCClientBuilder implements IEjabberdXMLRPCClientBuilder
     @Override
     public EjabberdXMLRPCClientBuilder setEjabberdPort(String ejabberdPort){
         this.ejabberdPort = ejabberdPort;
+        return this;
+    }
+
+    @Override
+    public IEjabberdXMLRPCClientBuilder setEjabberdUser(String ejabberdUser) {
+        this.ejabberdUser = ejabberdUser;
+        return this;
+    }
+
+    @Override
+    public IEjabberdXMLRPCClientBuilder setEjabberdPassword(String ejabberdPassword) {
+        this.ejabberdPassword = ejabberdPassword;
         return this;
     }
 
@@ -59,7 +75,12 @@ public class EjabberdXMLRPCClientBuilder implements IEjabberdXMLRPCClientBuilder
         XmlRpcClient client = new XmlRpcClient();
         client.setConfig(config);
 
-        return new EjabberdXMLRPCClient(this.executorService, client);
+        Map authParams = new HashMap();
+        authParams.put("user", ejabberdUser);
+        authParams.put("server", ejabberdHostname);
+        authParams.put("password", ejabberdPassword);
+
+        return new EjabberdXMLRPCClient(this.executorService, client, authParams);
     }
 
     URL buildUrl() throws MalformedURLException {

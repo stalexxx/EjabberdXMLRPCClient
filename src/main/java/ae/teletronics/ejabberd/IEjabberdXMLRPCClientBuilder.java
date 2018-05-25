@@ -13,6 +13,10 @@ public interface IEjabberdXMLRPCClientBuilder {
 
     IEjabberdXMLRPCClientBuilder setEjabberdPort(String ejabberdPort);
 
+    IEjabberdXMLRPCClientBuilder setEjabberdUser(String ejabberdUser);
+
+    IEjabberdXMLRPCClientBuilder setEjabberdPassword(String ejabberdPassword);
+
     IEjabberdXMLRPCClientBuilder setEjabberdProtocol(String ejabberdProtocol);
 
     IEjabberdXMLRPCClientBuilder setEjabberdPath(String ejabberdPath);

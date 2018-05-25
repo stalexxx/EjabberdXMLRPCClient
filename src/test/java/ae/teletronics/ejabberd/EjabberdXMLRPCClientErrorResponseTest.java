@@ -9,6 +9,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,7 +23,7 @@ public class EjabberdXMLRPCClientErrorResponseTest {
     public static final String ERROR_MESSAGE = "This is an error";
     XmlRpcClient xmlRpcClient = Mockito.mock(XmlRpcClient.class);
     ExecutorService executorService = Executors.newSingleThreadExecutor();
-    final IEjabberdXMLRPCClient ejabberdXmlrpcClient = new EjabberdXMLRPCClient(executorService, xmlRpcClient);
+    final IEjabberdXMLRPCClient ejabberdXmlrpcClient = new EjabberdXMLRPCClient(executorService, xmlRpcClient, Collections.emptyMap());
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();

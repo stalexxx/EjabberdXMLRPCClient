@@ -13,6 +13,8 @@ import java.util.concurrent.CompletableFuture;
 public interface IEjabberdXMLRPCClient {
     public CompletableFuture<BooleanXmppResponse> createUser(String username, String host, String password);
 
+    public CompletableFuture<BooleanXmppResponse> createRoom(String name, String host, String service);
+
     public CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host);
 
     public CompletableFuture<GetUsersResponse> getUsers(String host);

@@ -23,14 +23,20 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     ExecutorService executorService;
     XmlRpcClient client = new XmlRpcClient();
     ResponseParser responseParser = new ResponseParser();
+    private Map authParams;
 
-    public EjabberdXMLRPCClient(ExecutorService executorService, XmlRpcClient client) {
+    public EjabberdXMLRPCClient(ExecutorService executorService, XmlRpcClient client, Map authParams) {
         this.executorService = executorService;
         this.client = client;
+        this.authParams = authParams;
+    }
+
+    private List<Map> buildParams(Map params) {
+        return Arrays.asList(authParams, params);
     }
 
     @Override
-    public CompletableFuture<BooleanXmppResponse> createUser(String username, String host, String password){
+    public CompletableFuture<BooleanXmppResponse> createUser(String username, String host, String password) {
         Map params = new HashMap();
         params.put("user", username);
         params.put("host", host);
@@ -38,7 +44,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap createUserXMLRPCResponse = executeXmlRpc("register", Arrays.asList(params));
+                final HashMap createUserXMLRPCResponse = executeXmlRpc("register", buildParams(params));
                 return responseParser.parseBooleanResponse(createUserXMLRPCResponse);
             } catch (XmlRpcException e) {
                 throw new CompletionException(e);
@@ -48,13 +54,32 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
-    public CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host){
+    public CompletableFuture<BooleanXmppResponse> createRoom(String name, String host, String service) {
+        Map params = new HashMap();
+
+
+        params.put("name", name);
+        params.put("host", host);
+        params.put("service", service);
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                final HashMap response = executeXmlRpc("create_room", buildParams(params));
+                return responseParser.parseBooleanResponse(response);
+            } catch (XmlRpcException e) {
+                throw new CompletionException(e);
+            }
+        }, executorService);
+    }
+
+    @Override
+    public CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host) {
         Map params = new HashMap();
         params.put("user", username);
         params.put("host", host);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap deleteUserXMLRPCResponse = executeXmlRpc("unregister", Arrays.asList(params));
+                final HashMap deleteUserXMLRPCResponse = executeXmlRpc("unregister", buildParams(params));
                 return responseParser.parseBooleanResponse(deleteUserXMLRPCResponse);
             } catch (XmlRpcException e) {
                 throw new CompletionException(e);
@@ -63,12 +88,12 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
-    public CompletableFuture<GetUsersResponse> getUsers(String host){
+    public CompletableFuture<GetUsersResponse> getUsers(String host) {
         Map params = new HashMap();
         params.put("host", host);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("registered_users", Arrays.asList(params));
+                final HashMap response = executeXmlRpc("registered_users", buildParams(params));
                 final GetUsersResponse getUsersResponse = responseParser.parseGetUserResponse(response);
                 return getUsersResponse;
             } catch (XmlRpcException e) {
@@ -78,7 +103,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
-    public CompletableFuture<BooleanXmppResponse> addRosterItem(String localuser, String localserver, String user, String server, String nick, String group, String subs){
+    public CompletableFuture<BooleanXmppResponse> addRosterItem(String localuser, String localserver, String user, String server, String nick, String group, String subs) {
         Map params = new HashMap();
         params.put("localuser", localuser);
         params.put("localserver", localserver);
@@ -89,7 +114,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
         params.put("subs", subs);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("add_rosteritem", Arrays.asList(params));
+                final HashMap response = executeXmlRpc("add_rosteritem", buildParams(params));
                 final BooleanXmppResponse booleanXmppResponse = responseParser.parseBooleanResponse(response);
                 return booleanXmppResponse;
             } catch (XmlRpcException e) {
@@ -99,7 +124,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
-    public CompletableFuture<BooleanXmppResponse> deleteRosterItem(String localuser, String localserver, String user, String server){
+    public CompletableFuture<BooleanXmppResponse> deleteRosterItem(String localuser, String localserver, String user, String server) {
         Map params = new HashMap();
         params.put("localuser", localuser);
         params.put("localserver", localserver);
@@ -107,7 +132,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
         params.put("user", user);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("delete_rosteritem", Arrays.asList(params));
+                final HashMap response = executeXmlRpc("delete_rosteritem", buildParams(params));
                 return responseParser.parseBooleanResponse(response);
             } catch (XmlRpcException e) {
                 throw new CompletionException(e);
@@ -116,13 +141,13 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
-    public CompletableFuture<GetRosterResponse> getRoster(String user, String server){
+    public CompletableFuture<GetRosterResponse> getRoster(String user, String server) {
         Map struct = new HashMap();
         struct.put("user", user);
         struct.put("server", server);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("get_roster", Arrays.asList(struct));
+                final HashMap response = executeXmlRpc("get_roster", buildParams(struct));
                 return responseParser.parseGetRosterResponse(response);
             } catch (XmlRpcException e) {
                 throw new CompletionException(e);
@@ -140,7 +165,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
         struct.put("body", body);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("send_message", Arrays.asList(struct));
+                final HashMap response = executeXmlRpc("send_message", buildParams(struct));
                 return responseParser.parseBooleanResponse(response);
             } catch (XmlRpcException e) {
                 throw new CompletionException(e);
@@ -156,7 +181,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
         struct.put("stanza", stanza);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("send_stanza", Arrays.asList(struct));
+                final HashMap response = executeXmlRpc("send_stanza", buildParams(struct));
                 return responseParser.parseBooleanResponse(response);
             } catch (XmlRpcException e) {
                 throw new CompletionException(e);
@@ -165,7 +190,7 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
-    public CompletableFuture<GetUserPairListResponse> processRosterItems(String action, String subs, String asks, String users, String contacts){
+    public CompletableFuture<GetUserPairListResponse> processRosterItems(String action, String subs, String asks, String users, String contacts) {
         Map struct = new HashMap();
         struct.put("action", action);
         struct.put("subs", subs);
@@ -175,9 +200,9 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                final HashMap response = executeXmlRpc("process_rosteritems", Arrays.asList(struct));
+                final HashMap response = executeXmlRpc("process_rosteritems", buildParams(struct));
                 return responseParser.parseUserPairListResponse(response);
-            }catch (XmlRpcException e) {
+            } catch (XmlRpcException e) {
                 throw new CompletionException(e);
             }
         }, executorService);
