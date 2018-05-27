@@ -15,6 +15,8 @@ public interface IEjabberdXMLRPCClient {
 
     public CompletableFuture<BooleanXmppResponse> createRoom(String name, String host, String service);
 
+    public CompletableFuture<BooleanXmppResponse> changeRoomOptions(String name, String service, String option, String value);
+
     public CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host);
 
     public CompletableFuture<GetUsersResponse> getUsers(String host);
