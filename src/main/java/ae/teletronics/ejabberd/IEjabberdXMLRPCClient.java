@@ -11,25 +11,27 @@ import java.util.concurrent.CompletableFuture;
  * Created by carlos on 9/3/17.
  */
 public interface IEjabberdXMLRPCClient {
-    public CompletableFuture<BooleanXmppResponse> createUser(String username, String host, String password);
+    CompletableFuture<BooleanXmppResponse> createUser(String username, String host, String password);
 
-    public CompletableFuture<BooleanXmppResponse> createRoom(String name, String host, String service);
+    CompletableFuture<BooleanXmppResponse> createRoom(String name, String host, String service);
 
-    public CompletableFuture<BooleanXmppResponse> changeRoomOptions(String name, String service, String option, String value);
+    CompletableFuture<BooleanXmppResponse> changeRoomOptions(String name, String service, String option, String value);
 
-    public CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host);
+    CompletableFuture<BooleanXmppResponse> setRoomAffiliation(String roomName, String service, String jid, String member);
 
-    public CompletableFuture<GetUsersResponse> getUsers(String host);
+    CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host);
 
-    public CompletableFuture<BooleanXmppResponse> addRosterItem(String localuser, String localserver, String user, String server, String nick, String group, String subs);
+    CompletableFuture<GetUsersResponse> getUsers(String host);
 
-    public CompletableFuture<BooleanXmppResponse> deleteRosterItem(String localuser, String localserver, String user, String server);
+    CompletableFuture<BooleanXmppResponse> addRosterItem(String localuser, String localserver, String user, String server, String nick, String group, String subs);
 
-    public CompletableFuture<GetRosterResponse> getRoster(String user, String server);
+    CompletableFuture<BooleanXmppResponse> deleteRosterItem(String localuser, String localserver, String user, String server);
 
-    public CompletableFuture<BooleanXmppResponse> sendChatMessage(String to, String from, String subject, String body);
+    CompletableFuture<GetRosterResponse> getRoster(String user, String server);
 
-    public CompletableFuture<BooleanXmppResponse> sendStanza(String to, String from, String stanza);
+    CompletableFuture<BooleanXmppResponse> sendChatMessage(String to, String from, String subject, String body);
 
-    public CompletableFuture<GetUserPairListResponse> processRosterItems(String action, String subs, String asks, String users, String contacts);
+    CompletableFuture<BooleanXmppResponse> sendStanza(String to, String from, String stanza);
+
+    CompletableFuture<GetUserPairListResponse> processRosterItems(String action, String subs, String asks, String users, String contacts);
 }

@@ -125,6 +125,8 @@ public class Constants {
 
         public static final String GET_ROOM_AFFILIATIONS = "get_room_affiliations";
 
+        public static final String SET_ROOM_AFFILIATION = "set_room_affiliation";
+
         public static final String GET_ROOM_OCCUPANTS = "get_room_occupants";
 
         public static final String GET_ROOM_OCCUPANTS_NUMBER = "get_room_occupants_number";

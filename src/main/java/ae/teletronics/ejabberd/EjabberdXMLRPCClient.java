@@ -90,6 +90,23 @@ public class EjabberdXMLRPCClient implements IEjabberdXMLRPCClient {
     }
 
     @Override
+    public CompletableFuture<BooleanXmppResponse> setRoomAffiliation(String roomName, String service, String jid, String affiliation) {
+        Map params = new HashMap();
+        params.put("name", roomName);
+        params.put("service", service);
+        params.put("jid", jid);
+        params.put("affiliation", affiliation);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                final HashMap deleteUserXMLRPCResponse = executeXmlRpc(Constants.Api.SET_ROOM_AFFILIATION, buildParams(params));
+                return responseParser.parseBooleanResponse(deleteUserXMLRPCResponse);
+            } catch (XmlRpcException e) {
+                throw new CompletionException(e);
+            }
+        }, executorService);
+    }
+
+    @Override
     public CompletableFuture<BooleanXmppResponse> deleteUser(String username, String host) {
         Map params = new HashMap();
         params.put("user", username);
